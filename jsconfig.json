@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "esnext",
+    "module": "commonjs",
     "target": "es2015",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false
   },
+  "exclude": ["node_modules"]
 }
