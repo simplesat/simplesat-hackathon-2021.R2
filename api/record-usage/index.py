@@ -47,6 +47,15 @@ create_usage_mutation = gql(
     }
 """
 )
+increment_usage_mutation = gql(
+    """
+    mutation incrementUsageMutation ($date: date, $type: String, $owned_by: String) {
+    update_usage(_inc: {count: 1}, where: {date: {_eq: $date}, type: {_eq: $type}, owned_by: {_eq: $owned_by}}){
+        affected_rows
+    }
+}
+    """
+)
 
 
 class EventTriggerPayload(BaseModel):
@@ -59,19 +68,23 @@ class EventTriggerPayload(BaseModel):
 
 @app.post("/api/{full_path:path}")
 def record_usage(event_trigger_payload: EventTriggerPayload):
+    print(event_trigger_payload)
     date = event_trigger_payload.created_at.strftime('%Y-%m-%d')
-    print(date)
     owned_by = event_trigger_payload.event['data']['new']['owned_by']
-    print(owned_by)
     response = client.execute(
-        search_date_query, variable_values={"date": date})
-    print('###################')
-    print(response)
-    print('###################')
-    usage = response['usage']
+        search_date_query, variable_values={"date": date}
+    )
 
-    if usage:
-        pass
+    if response['usage']:
+        response = client.execute(
+            increment_usage_mutation, variable_values={
+                "date": date, "type": "send_email", "owned_by": owned_by}
+        )
+        if response['update_usage']['affected_rows'] == 1:
+            return HTMLResponse(status_code=204)
+        else:
+            return HTMLResponse(status_code=500)
+
     else:
         response = client.execute(
             create_usage_mutation, variable_values={
