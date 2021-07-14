@@ -1,7 +1,9 @@
-import firebase from "firebase"
-import { useEffect, useReducer, useState } from "react"
-import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
-import Button from "components/Button"
+import firebase from 'firebase'
+import { useEffect, useReducer, useState } from 'react'
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
+import Button from 'components/Button'
+import ApolloProviderContainer from 'components/ApolloProviderContainer'
+import SendEmailContainer from 'components/SendEmailContainer'
 
 export default function Login() {
   const [signinState, dispatch] = useReducer(signinReducer, defaultSigninState)
@@ -11,11 +13,12 @@ export default function Login() {
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
         user.getIdToken().then(function (token) {
+          localStorage.setItem('authToken', token)
           const tokenPayload = extractTokenPayload(token)
-          const hasHasuraClaim = Boolean(tokenPayload["https://hasura.io/jwt/claims"])
+          const hasHasuraClaim = Boolean(tokenPayload['https://hasura.io/jwt/claims'])
           if (hasHasuraClaim) {
-            console.log("Has Hasura claim")
-            console.log("Hasura claim", tokenPayload["https://hasura.io/jwt/claims"])
+            console.log('Has Hasura claim')
+            console.log('Hasura claim', tokenPayload['https://hasura.io/jwt/claims'])
           } else {
             if (unregisterFirestoreObserver) {
               return
@@ -24,7 +27,10 @@ export default function Login() {
             unregisterFirestoreObserver = db.doc(`metadata/${user.uid}`).onSnapshot((doc) => {
               if (doc.data()) {
                 user.getIdToken(true).then((token) => {
-                  console.log("Hasura claim", extractTokenPayload(token)["https://hasura.io/jwt/claims"])
+                  console.log(
+                    'Hasura claim',
+                    extractTokenPayload(token)['https://hasura.io/jwt/claims']
+                  )
                 })
               }
             })
@@ -42,15 +48,19 @@ export default function Login() {
     }
   })
 
-  if (signinState == "unknown") {
+  if (signinState == 'unknown') {
     return null
   }
 
-  if (signinState == "signedIn") {
+  if (signinState == 'signedIn') {
     return (
       <div className="h-screen grid place-items-center">
         <div>
           <h1>Welcome usage report!!!</h1>
+          <ApolloProviderContainer>
+            <SendEmailContainer />
+          </ApolloProviderContainer>
+
           <Button
             onClick={() => {
               firebase.auth().signOut()
@@ -63,11 +73,14 @@ export default function Login() {
     )
   }
 
-  if (signinState == "signedOut") {
+  if (signinState == 'signedOut') {
     return (
       <div className="h-screen grid place-items-center">
         <div className="text-center text-xl">
-          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}></StyledFirebaseAuth>
+          <StyledFirebaseAuth
+            uiConfig={uiConfig}
+            firebaseAuth={firebase.auth()}
+          ></StyledFirebaseAuth>
         </div>
       </div>
     )
@@ -75,7 +88,7 @@ export default function Login() {
 }
 
 const uiConfig = {
-  signInFlow: "popup",
+  signInFlow: 'popup',
   signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
   callbacks: {
     signInSuccessWithAuthResult: () => false,
@@ -94,17 +107,17 @@ const uiConfig = {
  */
 function signinReducer(_, isLoggedIn) {
   if (isLoggedIn) {
-    return "signedIn"
+    return 'signedIn'
   } else {
-    return "signedOut"
+    return 'signedOut'
   }
 }
 
-const defaultSigninState = "unknown"
+const defaultSigninState = 'unknown'
 
 /**
  * @param {string} jwt
  */
 function extractTokenPayload(jwt) {
-  return JSON.parse(atob(jwt.split(".")[1]))
+  return JSON.parse(atob(jwt.split('.')[1]))
 }
