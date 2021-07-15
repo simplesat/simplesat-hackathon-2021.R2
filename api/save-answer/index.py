@@ -41,7 +41,7 @@ class EventTriggerPayload(BaseModel):
 
 insert_answer_mutation = gql(
     """
-    mutation insertAnswerMutation ($value: String, $survey_id: String, $ticket_id: String, $owned_by: String, $customer_id: String) {
+    mutation insertAnswerMutation ($value: Int, $survey_id: String, $ticket_id: String, $owned_by: String, $customer_id: String) {
         insert_answer(objects: {value: $value, survey_id: $survey_id, ticket_id: $ticket_id, owned_by: $owned_by, customer_id: $customer_id}) {
             affected_rows
         }
@@ -52,56 +52,16 @@ insert_answer_mutation = gql(
 
 @app.post("/api/{full_path:path}")
 def save_answer(event_trigger_payload: EventTriggerPayload):
-    customer = get_or_create_customer(
-        email=event_trigger_payload.event['data']['new']['email'],
-        owned_by=event_trigger_payload.event['data']['new']['owned_by']
-    )
     response = client.execute(
         insert_answer_mutation, variable_values={
-            "value": event_trigger_payload.event['data']['new']['value'],
+            "value": event_trigger_payload.event['data']['new']['feedback_value'],
+            "customer_id": event_trigger_payload.event['data']['new']['customer_id'],
             "survey_id": event_trigger_payload.event['data']['new']['survey_id'],
             "ticket_id": event_trigger_payload.event['data']['new']['ticket_id'],
             "owned_by": event_trigger_payload.event['data']['new']['owned_by'],
-            "customer_id": customer['id']
         }
     )
     if response['insert_answer']['affected_rows'] == 1:
         return HTMLResponse(status_code=204)
 
     return HTMLResponse(status_code=500)
-
-
-get_customer_query = gql(
-    """
-    query getCustomer ($email: String,$owned_by: String) {
-      usage(where: {email: {_eq: $email}, owned_by: {_eq: $owned_by}}) {
-        id
-      }
-    }
-    """
-)
-insert_cutomer_mutation = gql(
-    """
-    mutation insertCustomerMutation ($email: String, $owned_by: String) {
-        insert_customer(objects: {email: $email, owned_by: $owned_by, name: ""}) {
-            id
-        }
-    }
-    """
-)
-
-
-def get_or_create_customer(email: str, owned_by: str):
-    customer = client.execute(
-        get_customer_query,
-        variable_values={"email": email, "owned_by": owned_by}
-    )
-    is_customer_exist = len(customer['customer'])
-    if is_customer_exist:
-        return customer['customer'][0]
-    else:
-        response = client.execute(
-            insert_cutomer_mutation,
-            variable_values={"email": email, "owned_by": owned_by}
-        )
-        return response['insert_customer']['returning'][0]
