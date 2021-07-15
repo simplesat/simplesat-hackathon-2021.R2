@@ -1,6 +1,7 @@
 import { Story } from '@storybook/react'
 
 import Form from 'components/Form/index'
+import TicketInput from 'components/TicketInput'
 
 export default {
   title: 'Components/Form',
@@ -16,7 +17,7 @@ export default {
       action: 'clicked',
     },
     onChangeInput: {
-      action: 'clicked',
+      action: 'input changed',
     },
   },
 }
@@ -26,6 +27,7 @@ const Template: TemplateType = ({ onChangeInput, ...args }) => (
   <Form {...args}>
     <Form.Input placeholder="required" required onChange={onChangeInput} />
     <Form.Input placeholder="email" type="email" onChange={onChangeInput} />
+    <Form.Input as={TicketInput} onChange={onChangeInput} />
   </Form>
 )
 

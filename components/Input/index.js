@@ -4,7 +4,7 @@ import classNames from 'classnames'
 /**
  *
  * @param {object} props
- * @param {() => void} props.onChange
+ * @param {(value: string) => void} props.onChange
  * @param {string} [props.label]
  * @param {string} [props.placeholder]
  * @param {string} [props.className]
@@ -44,7 +44,9 @@ export default function Input({
           type={type}
           disabled={disabled}
           required={required}
-          onChange={onChange}
+          onChange={(e) => {
+            onChange(e.target.value)
+          }}
           onBlur={onBlur}
           onInvalid={onInvalid}
           onFocus={onFocus}

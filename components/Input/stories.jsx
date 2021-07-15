@@ -13,6 +13,9 @@ export default {
     onClick: {
       action: 'clicked',
     },
+    onChange: {
+      action: 'changed',
+    },
   },
 }
 

@@ -57,10 +57,12 @@ export function Form({ children }) {
   )
 }
 
-/**
- * @param {React.ComponentProps<typeof Input>} props
- */
-Form.Input = function FormInput(props) {
+
+type FormInputProps = {
+  as?: React.FunctionComponent<React.ComponentPropsWithoutRef<typeof Input>>
+}
+
+Form.Input = function FormInput({as, ...props}: React.ComponentPropsWithoutRef<typeof Input> & FormInputProps) {
   const [formInputMachineState, sendFormInputEvent] = useMachine(formInputMachine)
   console.log('inputStatus', formInputMachineState.value)
   const { hiddenButtonRef, registerOnSubmitCallback } = useContext(formContext)
@@ -86,26 +88,32 @@ Form.Input = function FormInput(props) {
     setTimeout(() => {
       hiddenButtonRef?.current?.click()
     })
+    props.onBlur?.()
   }
 
+  const InputComponent = as || Input
+
   return (
-    <Input
+    <InputComponent
       {...props}
       onBlur={handleBlur}
       onFocus={() => {
         sendFormInputEvent({
           type: 'onFocus',
         })
+        props.onFocus?.()
       }}
       onInvalid={() => {
         sendFormInputEvent({
           type: 'onInvalid',
         })
+        props.onInvalid?.()
       }}
-      onChange={() => {
+      onChange={(value) => {
         sendFormInputEvent({
           type: 'onChange',
         })
+        props.onChange?.(value)
       }}
     />
   )
