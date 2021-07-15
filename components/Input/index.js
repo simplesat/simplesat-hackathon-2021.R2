@@ -1,10 +1,10 @@
 import tw, { css } from 'twin.macro'
-import classNames from 'classnames'
 
 /**
  *
  * @param {object} props
  * @param {(value: string) => void} props.onChange
+ * @param {string} [props.value]
  * @param {string} [props.label]
  * @param {string} [props.placeholder]
  * @param {string} [props.className]
@@ -18,6 +18,7 @@ import classNames from 'classnames'
  */
 export default function Input({
   onChange,
+  value,
   label,
   placeholder,
   className,
@@ -29,7 +30,7 @@ export default function Input({
   required,
 }) {
   return (
-    <span>
+    <span tw="mr-4 last-of-type:mr-0" className={className}>
       <label>
         {label && (
           <span tw="text-sm">
@@ -38,7 +39,8 @@ export default function Input({
           </span>
         )}
         <input
-          className={classNames(className, 'mt-2')}
+          value={value}
+          className="mt-2"
           css={inputCss}
           placeholder={placeholder}
           type={type}

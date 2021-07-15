@@ -4,9 +4,8 @@ import { useMachine } from '@xstate/react'
 
 import Input from 'components/Input'
 
-
 type ContextValue = {
-  hiddenButtonRef: React.MutableRefObject<HTMLButtonElement|null>
+  hiddenButtonRef: React.MutableRefObject<HTMLButtonElement | null>
   registerOnSubmitCallback: (callback: Function) => Function
 }
 
@@ -57,12 +56,14 @@ export function Form({ children }) {
   )
 }
 
-
 type FormInputProps = {
   as?: React.FunctionComponent<React.ComponentPropsWithoutRef<typeof Input>>
 }
 
-Form.Input = function FormInput({as, ...props}: React.ComponentPropsWithoutRef<typeof Input> & FormInputProps) {
+Form.Input = function FormInput({
+  as,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof Input> & FormInputProps) {
   const [formInputMachineState, sendFormInputEvent] = useMachine(formInputMachine)
   console.log('inputStatus', formInputMachineState.value)
   const { hiddenButtonRef, registerOnSubmitCallback } = useContext(formContext)

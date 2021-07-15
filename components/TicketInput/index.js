@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import tw, { css } from 'twin.macro'
-import classNames from 'classnames'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSyncAlt } from '@fortawesome/pro-solid-svg-icons'
@@ -47,7 +46,7 @@ export default function TicketInput({
   }
 
   return (
-    <span tw="relative inline-block">
+    <span tw="relative inline-block mr-4 last-of-type:mr-0" className={className}>
       <label tw="pointer-events-none">
         {label && (
           <span tw="text-sm">
@@ -60,7 +59,7 @@ export default function TicketInput({
           onSelect={(e) => {
             e.preventDefault()
           }}
-          className={classNames(className, 'mt-2')}
+          className="mt-2"
           css={[inputCss, tw`pr-10`]}
           placeholder={placeholder}
           type={type}
