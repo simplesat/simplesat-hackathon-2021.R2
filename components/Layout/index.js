@@ -1,23 +1,38 @@
-import NavButton from 'components/NavButton'
 import Head from 'next/head'
 import tw, { css } from 'twin.macro'
 import Image from 'next/image'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEnvelope, faFileChartLine, faReceipt, faSignOut } from '@fortawesome/pro-solid-svg-icons'
+
+import NavButton from 'components/NavButton'
 
 const navButtons = [
-  { label: 'Report', path: '/report', icon: null },
-  { label: 'Send email', path: '/sendemail', icon: null },
-  { label: 'Billing page', path: '/billing', icon: null },
+  {
+    label: 'Report',
+    path: '/report',
+    icon: <FontAwesomeIcon icon={faFileChartLine} tw="w-4"></FontAwesomeIcon>,
+  },
+  {
+    label: 'Send email',
+    path: '/sendemail',
+    icon: <FontAwesomeIcon icon={faEnvelope} tw="w-4"></FontAwesomeIcon>,
+  },
+  {
+    label: 'Billing page',
+    path: '/billing',
+    icon: <FontAwesomeIcon icon={faReceipt} tw="w-4"></FontAwesomeIcon>,
+  },
 ]
 export default function Layout({ children }) {
   const menuItemStyles = css`
-    ${tw`block py-1 md:py-3 pl-4 align-middle no-underline hover:`}
+    ${tw`flex items-center  py-1 md:py-3 pl-4 align-middle no-underline !cursor-pointer`}
     &:hover {
       ${tw`bg-green-50 border-r-4 border-green-400`}
     }
   `
 
   const menuItemTextStyles = css`
-  pb-1 md:pb-0 text-xs md:text-base block md:inline-block
+    ${tw`!ml-2 pb-1 md:pb-0 text-xs md:text-base block md:inline-block`}
   `
 
   return (
@@ -65,6 +80,7 @@ export default function Layout({ children }) {
 
               <li className="mr-3 flex-1">
                 <a href="#" css={[menuItemStyles]}>
+                  <FontAwesomeIcon icon={faSignOut} tw="w-4" />
                   <span css={menuItemTextStyles}>Sign out</span>
                 </a>
               </li>
