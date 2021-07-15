@@ -1,12 +1,11 @@
-import os
 import datetime
+import os
 
 import sendgrid
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from jinja2 import Environment, FileSystemLoader
 from pydantic import BaseModel
-
 
 app = FastAPI()
 
@@ -38,13 +37,13 @@ def send_email(event_trigger_payload: EventTriggerPayload):
 
     personalizations = []
     for receiver in event_trigger_payload.event['data']['new']['batch']:
-        file_loader = FileSystemLoader('templates')
+        file_loader = FileSystemLoader('api/send-email/templates')
         env = Environment(loader=file_loader)
         template = env.get_template('email_template.html')
         content = template.render(
             question=question,
             survey_id=event_trigger_payload.event['data']['new']['survey_id'],
-            ticket_id=event_trigger_payload.event['data']['new']['ticket_id']
+            ticket_id=receiver['ticket_id']
         )
 
         sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
