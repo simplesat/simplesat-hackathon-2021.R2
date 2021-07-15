@@ -1,15 +1,17 @@
 import os
 import datetime
+from typing import Optional
 
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 hasura_admin_secret = os.getenv("HASURA_ADMIN_SECRET", "")
 hasura_graphql_server = os.getenv("HASURA_GRAPHQL_SERVER", "")
 hasura_graphql_server_ip = os.getenv("HASURA_GRAPHQL_SERVER_IP", "")
+simplesat_secret_token = os.getenv("SIMPLESAT_SECRET_TOKEN", "")
 
 app = FastAPI()
 
@@ -53,6 +55,15 @@ increment_usage_mutation = gql(
 )
 
 
+@app.middleware("http")
+async def validate_incoming_request(request: Request, call_next):
+    if request.headers['X-Simplesat-Secret'] == simplesat_secret_token:
+        response = await call_next(request)
+        return response
+    else:
+        return HTMLResponse(status_code=401)
+
+
 class EventTriggerPayload(BaseModel):
     id: str
     created_at: datetime.datetime
@@ -63,6 +74,9 @@ class EventTriggerPayload(BaseModel):
 
 @app.post("/api/{full_path:path}")
 def record_usage(event_trigger_payload: EventTriggerPayload):
+    print('********************************************************')
+    print(event_trigger_payload)
+    print('********************************************************')
     date = event_trigger_payload.created_at.strftime('%Y-%m-%d')
     owned_by = event_trigger_payload.event['data']['new']['owned_by']
     type = event_trigger_payload.trigger['name']\
