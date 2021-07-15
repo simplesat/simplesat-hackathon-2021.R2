@@ -32,7 +32,7 @@ async def validate_incoming_request(request: Request, call_next):
         return HTMLResponse(status_code=401)
 
 
-@app.post("/api/send-email/")
+@app.post("/api/{full_path:path}")
 def send_email(event_trigger_payload: EventTriggerPayload):
     question = 'How would you rate your latest experience with Simplesat?'
 
