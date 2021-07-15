@@ -5,15 +5,21 @@ import {
   HttpLink,
   NormalizedCacheObject,
 } from '@apollo/client'
+import { withRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-export default function ApolloProviderContainer({ children }) {
+export default withRouter(ApolloProviderContainer)
+function ApolloProviderContainer({ children, router }) {
   const [apolloClient, setApolloClient] = useState<ApolloClient<NormalizedCacheObject>|null>(null)
 
   useEffect(() => {
-    const authToken = localStorage.getItem('authToken')
-    setApolloClient(createApolloClient(authToken))
-  }, [])
+    if(router.pathname.startsWith('/rating')){
+      setApolloClient(createApolloClient(null))
+    }else{
+      const authToken = localStorage.getItem('authToken')
+      setApolloClient(createApolloClient(authToken))
+    }
+  }, [router.pathname])
 
   if (apolloClient === null) {
     return <>loading...</>
