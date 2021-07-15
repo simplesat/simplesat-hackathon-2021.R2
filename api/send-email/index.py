@@ -2,7 +2,7 @@ import os
 import datetime
 
 import sendgrid
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from jinja2 import Environment, FileSystemLoader
 from pydantic import BaseModel
@@ -11,7 +11,8 @@ from pydantic import BaseModel
 app = FastAPI()
 
 
-SENDGRID_API_KEY = os.getenv('api_key', '')
+simplesat_secret_token = os.getenv("SIMPLESAT_SECRET_TOKEN", "")
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
 
 
 class EventTriggerPayload(BaseModel):
@@ -20,6 +21,15 @@ class EventTriggerPayload(BaseModel):
     trigger: dict
     table: dict
     event: dict
+
+
+@app.middleware('http')
+async def validate_incoming_request(request: Request, call_next):
+    if request.headers['X-Simplesat-Secret'] == simplesat_secret_token:
+        response = await call_next(request)
+        return response
+    else:
+        return HTMLResponse(status_code=401)
 
 
 @app.post("/api/send-email/")
