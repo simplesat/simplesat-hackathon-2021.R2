@@ -6,11 +6,12 @@
     "dev": "yarn tailwind:watch& next dev",
     "build": "yarn tailwind:build && next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "tsc && next lint",
     "tailwind:watch": "npx tailwindcss -i styles/tailwind.config.css -o styles/tailwind.css --watch",
     "tailwind:build": "npx tailwindcss -i styles/tailwind.config.css -o styles/tailwind.css",
     "storybook": "yarn tailwind:watch& start-storybook -p 9000",
-    "build-storybook": "yarn tailwind:build && build-storybook"
+    "build-storybook": "yarn tailwind:build && build-storybook",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@apollo/client": "^3.3.21",
@@ -38,6 +39,7 @@
     "eslint": "7.30.0",
     "eslint-config-next": "11.0.1",
     "firebase": "^8.7.1",
+    "husky": "^7.0.1",
     "postcss": "^8.3.5",
     "react-firebaseui": "^5.0.2",
     "tailwindcss": "^2.2.4",

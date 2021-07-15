@@ -1,8 +1,14 @@
-import { ApolloClient, ApolloProvider, InMemoryCache, HttpLink } from '@apollo/client'
+import {
+  ApolloClient,
+  ApolloProvider,
+  InMemoryCache,
+  HttpLink,
+  NormalizedCacheObject,
+} from '@apollo/client'
 import { useEffect, useState } from 'react'
 
 export default function ApolloProviderContainer({ children }) {
-  const [apolloClient, setApolloClient] = useState(null)
+  const [apolloClient, setApolloClient] = useState<ApolloClient<NormalizedCacheObject>|null>(null)
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken')
@@ -10,7 +16,7 @@ export default function ApolloProviderContainer({ children }) {
   }, [])
 
   if (apolloClient === null) {
-    return 'loading...'
+    return <>loading...</>
   }
 
   return <ApolloProvider client={apolloClient}>{children}</ApolloProvider>

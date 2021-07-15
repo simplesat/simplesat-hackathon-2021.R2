@@ -1,14 +1,5 @@
 import Button from 'components/Button'
-import {
-  ApolloClient,
-  ApolloProvider,
-  InMemoryCache,
-  HttpLink,
-  useMutation,
-  gql,
-} from '@apollo/client'
-
-import { useEffect, useState } from 'react'
+import { useMutation, gql } from '@apollo/client'
 
 export default function SendEmailContainer() {
   const [insertSendEmailEvent] = useMutation(INSERT_SEND_EMAIL_EVENT, {

@@ -20,7 +20,7 @@ export default {
 }
 
 /**
- * @type {Story<import('react').ComponentPropsWithoutRef<typeof Input>>}
+ * @type {Story<React.ComponentPropsWithoutRef<typeof Input>>}
  */
 const Template = (args) => <Input {...args} />
 
@@ -34,6 +34,7 @@ Disabled.args = {
 
 export const Labeled = Template.bind({})
 Labeled.args = {
+  type: 'a',
   required: false,
   label: 'Email',
 }

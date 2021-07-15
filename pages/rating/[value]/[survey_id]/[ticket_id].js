@@ -30,7 +30,7 @@ export default function Rating() {
         variables,
       })
     }
-  }, [customer, ticket_id, value, survey_id, owned_by])
+  }, [customer, insertReceiveFeedbackEvent, owned_by, survey_id, ticket_id, value])
 
   return (
     <>
@@ -60,8 +60,8 @@ function StarRating({ rating }) {
   if (rating > 0) {
     return (
       <div className="flex justify-center">
-        {Array.from(Array(rating).keys()).map(() => (
-          <Star isActive></Star>
+        {Array.from(Array(rating).keys()).map((index) => (
+          <Star key={index} isActive></Star>
         ))}
       </div>
     )

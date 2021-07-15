@@ -1,14 +1,14 @@
-import tw, { styled } from 'twin.macro'
+import tw from 'twin.macro'
 
 /**
- * @typedef {'basic'|'primary'} Type
+ * @typedef {'basic'|'primary'} ButtonType
  *
  * @param {object} props
- * @param {Type} [props.type=basic]
  * @param {import('react').ReactNode} props.children
- * @param {string} props.className
- * @param {function} props.onClick
- * @param {boolean} props.disabled
+ * @param {() => void} props.onClick
+ * @param {string} [props.className]
+ * @param {ButtonType} [props.type]
+ * @param {boolean} [props.disabled]
  */
 export default function Button({ children, type = 'basic', className, onClick, disabled }) {
   const typeStyles = {

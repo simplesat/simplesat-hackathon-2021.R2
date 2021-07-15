@@ -1,8 +1,7 @@
 import firebase from 'firebase'
-import { useEffect, useReducer, useState } from 'react'
+import { useEffect, useReducer } from 'react'
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 import Button from 'components/Button'
-import ApolloProviderContainer from 'components/ApolloProviderContainer'
 import SendEmailContainer from 'components/SendEmailContainer'
 
 export default function Login() {
