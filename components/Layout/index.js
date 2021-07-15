@@ -2,25 +2,20 @@ import Head from 'next/head'
 import tw, { css } from 'twin.macro'
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope, faFileChartLine, faReceipt, faSignOut } from '@fortawesome/pro-solid-svg-icons'
+import { faEnvelope, faReceipt, faSignOut } from '@fortawesome/pro-solid-svg-icons'
 
 import NavButton from 'components/NavButton'
 
 const navButtons = [
   {
-    label: 'Report',
-    path: '/report',
-    icon: <FontAwesomeIcon icon={faFileChartLine} tw="w-4"></FontAwesomeIcon>,
+    label: 'Billing page',
+    path: '/billing',
+    icon: <FontAwesomeIcon icon={faReceipt} tw="w-4"></FontAwesomeIcon>,
   },
   {
     label: 'Send email',
     path: '/sendemail',
     icon: <FontAwesomeIcon icon={faEnvelope} tw="w-4"></FontAwesomeIcon>,
-  },
-  {
-    label: 'Billing page',
-    path: '/billing',
-    icon: <FontAwesomeIcon icon={faReceipt} tw="w-4"></FontAwesomeIcon>,
   },
 ]
 export default function Layout({ children }) {
