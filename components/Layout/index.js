@@ -1,24 +1,15 @@
+import firebase from 'firebase'
 import Head from 'next/head'
-import tw, { css } from 'twin.macro'
 import Image from 'next/image'
+import { withRouter } from 'next/router'
+import tw, { css } from 'twin.macro'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faReceipt, faSignOut } from '@fortawesome/pro-solid-svg-icons'
 
 import NavButton from 'components/NavButton'
 
-const navButtons = [
-  {
-    label: 'Billing page',
-    path: '/billing',
-    icon: <FontAwesomeIcon icon={faReceipt} tw="w-4"></FontAwesomeIcon>,
-  },
-  {
-    label: 'Send email',
-    path: '/sendemail',
-    icon: <FontAwesomeIcon icon={faEnvelope} tw="w-4"></FontAwesomeIcon>,
-  },
-]
-export default function Layout({ children }) {
+export default withRouter(Layout)
+function Layout({ children, router }) {
   const menuItemStyles = css`
     ${tw`flex items-center  py-1 md:py-3 pl-4 align-middle no-underline !cursor-pointer`}
     &:hover {
@@ -74,7 +65,14 @@ export default function Layout({ children }) {
               ))}
 
               <li className="mr-3 flex-1">
-                <a href="#" css={[menuItemStyles]}>
+                <a
+                  onClick={(e) => {
+                    e.preventDefault()
+                    router.push('/login')
+                    firebase.auth().signOut()
+                  }}
+                  css={[menuItemStyles]}
+                >
                   <FontAwesomeIcon icon={faSignOut} tw="w-4" />
                   <span css={menuItemTextStyles}>Sign out</span>
                 </a>
@@ -89,3 +87,16 @@ export default function Layout({ children }) {
     </div>
   )
 }
+
+const navButtons = [
+  {
+    label: 'Billing page',
+    path: '/billing',
+    icon: <FontAwesomeIcon icon={faReceipt} tw="w-4"></FontAwesomeIcon>,
+  },
+  {
+    label: 'Send email',
+    path: '/sendemail',
+    icon: <FontAwesomeIcon icon={faEnvelope} tw="w-4"></FontAwesomeIcon>,
+  },
+]

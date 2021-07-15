@@ -3,9 +3,11 @@ import { useEffect, useReducer } from 'react'
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 import Button from 'components/Button'
 import SendEmailContainer from 'components/SendEmailContainer'
+import { useRouter } from 'next/router'
 
 export default function Login() {
   const [signinState, dispatch] = useReducer(signinReducer, defaultSigninState)
+  const router = useRouter()
 
   useEffect(() => {
     let unregisterFirestoreObserver
@@ -34,6 +36,7 @@ export default function Login() {
               }
             })
           }
+          router.push('/billing')
         })
       }
       dispatch(Boolean(user))
