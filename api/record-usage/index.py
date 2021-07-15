@@ -1,6 +1,5 @@
 import os
 import datetime
-from typing import Optional
 
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
@@ -35,9 +34,9 @@ search_date_query = gql(
     }
     """
 )
-create_usage_mutation = gql(
+insert_usage_mutation = gql(
     """
-    mutation createUserMutation ($date: date, $type: String, $owned_by: String, $number_of_email_sent: Int) {
+    mutation insertUsageMutation ($date: date, $type: String, $owned_by: String, $number_of_email_sent: Int) {
         insert_usage(objects: {date: $date, type: $type, owned_by: $owned_by, count: $number_of_email_sent}) {
             affected_rows
         }
@@ -74,9 +73,6 @@ class EventTriggerPayload(BaseModel):
 
 @app.post("/api/{full_path:path}")
 def record_usage(event_trigger_payload: EventTriggerPayload):
-    print('********************************************************')
-    print(event_trigger_payload)
-    print('********************************************************')
     date = event_trigger_payload.created_at.strftime('%Y-%m-%d')
     owned_by = event_trigger_payload.event['data']['new']['owned_by']
     type = event_trigger_payload.trigger['name']\
@@ -99,7 +95,7 @@ def record_usage(event_trigger_payload: EventTriggerPayload):
 
 def _create_new_usage(date: str, owned_by: str, type: str, number_of_email_sent: int):
     response = client.execute(
-        create_usage_mutation, variable_values={
+        insert_usage_mutation, variable_values={
             "date": date, "type": type, "owned_by": owned_by, "number_of_email_sent": number_of_email_sent}
     )
     if response['insert_usage']['affected_rows'] == 1:
