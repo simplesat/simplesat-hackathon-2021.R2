@@ -36,8 +36,8 @@ search_date_query = gql(
 )
 insert_usage_mutation = gql(
     """
-    mutation insertUsageMutation ($date: date, $type: String, $owned_by: String, $number_of_email_sent: Int) {
-        insert_usage(objects: {date: $date, type: $type, owned_by: $owned_by, count: $number_of_email_sent}) {
+    mutation insertUsageMutation ($date: date, $type: String, $owned_by: String, $count: Int) {
+        insert_usage(objects: {date: $date, type: $type, owned_by: $owned_by, count: $count}) {
             affected_rows
         }
     }
@@ -45,8 +45,8 @@ insert_usage_mutation = gql(
 )
 increment_usage_mutation = gql(
     """
-    mutation incrementUsageMutation ($date: date, $type: String, $owned_by: String, $number_of_email_sent: Int) {
-        update_usage(_inc: {count: $number_of_email_sent}, where: {date: {_eq: $date}, type: {_eq: $type}, owned_by: {_eq: $owned_by}}){
+    mutation incrementUsageMutation ($date: date, $type: String, $owned_by: String, $count: Int) {
+        update_usage(_inc: {count: $count}, where: {date: {_eq: $date}, type: {_eq: $type}, owned_by: {_eq: $owned_by}}){
             affected_rows
         }
     }
@@ -73,12 +73,15 @@ class EventTriggerPayload(BaseModel):
 
 @app.post("/api/{full_path:path}")
 def record_usage(event_trigger_payload: EventTriggerPayload):
-    date = event_trigger_payload.created_at.strftime('%Y-%m-%d')
-    owned_by = event_trigger_payload.event['data']['new']['owned_by']
     type = event_trigger_payload.trigger['name']\
         .replace('record_', '')\
         .replace('_usage', '')
-    number_of_email_sent = len(
+    if type not in ['receive_feedback', 'send_email']:
+        return HTMLResponse(status_code=400)
+
+    date = event_trigger_payload.created_at.strftime('%Y-%m-%d')
+    owned_by = event_trigger_payload.event['data']['new']['owned_by']
+    count = 1 if type == 'receive_feedback' else len(
         event_trigger_payload.event['data']['new']['batch'])
 
     usage = client.execute(
@@ -88,15 +91,15 @@ def record_usage(event_trigger_payload: EventTriggerPayload):
     is_usage_exist = len(usage['usage'])
 
     if is_usage_exist:
-        return _increment_usage(date, owned_by, type, number_of_email_sent)
+        return _increment_usage(date, owned_by, type, count)
     else:
-        return _create_new_usage(date, owned_by, type, number_of_email_sent)
+        return _create_new_usage(date, owned_by, type, count)
 
 
-def _create_new_usage(date: str, owned_by: str, type: str, number_of_email_sent: int):
+def _create_new_usage(date: str, owned_by: str, type: str, count: int):
     response = client.execute(
         insert_usage_mutation, variable_values={
-            "date": date, "type": type, "owned_by": owned_by, "number_of_email_sent": number_of_email_sent}
+            "date": date, "type": type, "owned_by": owned_by, "count": count}
     )
     if response['insert_usage']['affected_rows'] == 1:
         return HTMLResponse(status_code=204)
@@ -104,10 +107,10 @@ def _create_new_usage(date: str, owned_by: str, type: str, number_of_email_sent:
     return HTMLResponse(status_code=500)
 
 
-def _increment_usage(date: str, owned_by: str, type: str, number_of_email_sent: int):
+def _increment_usage(date: str, owned_by: str, type: str, count: int):
     response = client.execute(
         increment_usage_mutation, variable_values={
-            "date": date, "type": type, "owned_by": owned_by, "number_of_email_sent": number_of_email_sent}
+            "date": date, "type": type, "owned_by": owned_by, "count": count}
     )
     if response['update_usage']['affected_rows'] == 1:
         return HTMLResponse(status_code=204)
