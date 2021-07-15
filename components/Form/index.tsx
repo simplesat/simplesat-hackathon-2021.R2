@@ -4,22 +4,21 @@ import { useMachine } from '@xstate/react'
 
 import Input from 'components/Input'
 
-/**
- * @typedef ContextValue
- * @property {React.MutableRefObject<?HTMLButtonElement>} hiddenButtonRef
- * @property {(callback: function) => function} registerOnSubmitCallback
- */
 
-/** @type {React.Context<Partial<ContextValue>>} */
-const formContext = createContext({})
+type ContextValue = {
+  hiddenButtonRef: React.MutableRefObject<HTMLButtonElement|null>
+  registerOnSubmitCallback: (callback: Function) => Function
+}
+
+const formContext = createContext<Partial<ContextValue>>({})
 
 /**
  * @param {object} props
  * @param {React.ReactNode} props.children
  */
-export default function Form({ children }) {
+export function Form({ children }) {
   const hiddenButtonRef = useRef(null)
-  const [onSubmitCallbacks, setOnSubmitCallback] = useState(new Set())
+  const [onSubmitCallbacks, setOnSubmitCallback] = useState(new Set<Function>())
 
   const registerOnSubmitCallback = useCallback(function (onSubmitCallback) {
     setOnSubmitCallback((onSubmitCallbacks) => {
@@ -90,30 +89,29 @@ Form.Input = function FormInput(props) {
   }
 
   return (
-    <>
-      inputStatus: {formInputMachineState.value}
-      <Input
-        {...props}
-        onBlur={handleBlur}
-        onFocus={() => {
-          sendFormInputEvent({
-            type: 'onFocus',
-          })
-        }}
-        onInvalid={() => {
-          sendFormInputEvent({
-            type: 'onInvalid',
-          })
-        }}
-        onChange={() => {
-          sendFormInputEvent({
-            type: 'onChange',
-          })
-        }}
-      />
-    </>
+    <Input
+      {...props}
+      onBlur={handleBlur}
+      onFocus={() => {
+        sendFormInputEvent({
+          type: 'onFocus',
+        })
+      }}
+      onInvalid={() => {
+        sendFormInputEvent({
+          type: 'onInvalid',
+        })
+      }}
+      onChange={() => {
+        sendFormInputEvent({
+          type: 'onChange',
+        })
+      }}
+    />
   )
 }
+
+export default Form
 
 /**
  * @typedef {'TOUCHED'|'UNTOUCHED'|'VALID'|'INVALID'} FormInputStatus

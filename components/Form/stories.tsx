@@ -1,7 +1,6 @@
-import React from 'react'
 import { Story } from '@storybook/react'
 
-import Form from 'components/Form'
+import Form from 'components/Form/index'
 
 export default {
   title: 'Components/Form',
@@ -22,10 +21,8 @@ export default {
   },
 }
 
-/**
- * @type {Story<import('react').ComponentPropsWithoutRef<typeof Form>&{onChangeInput: () => void}>}
- */
-const Template = ({ onChangeInput, ...args }) => (
+type TemplateType = Story<import('react').ComponentPropsWithoutRef<typeof Form>&{onChangeInput: () => void}>
+const Template: TemplateType = ({ onChangeInput, ...args }) => (
   <Form {...args}>
     <Form.Input placeholder="required" required onChange={onChangeInput} />
     <Form.Input placeholder="email" type="email" onChange={onChangeInput} />

@@ -10,9 +10,6 @@ export default {
     disabled: false,
   },
   argTypes: {
-    type: {
-      options: ['basic', 'primary'],
-    },
     onClick: {
       action: 'clicked',
     },
@@ -34,7 +31,6 @@ Disabled.args = {
 
 export const Labeled = Template.bind({})
 Labeled.args = {
-  type: 'a',
   required: false,
   label: 'Email',
 }
