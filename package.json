@@ -7,8 +7,10 @@
     "build": "yarn tailwind:build && next build",
     "start": "next start",
     "lint": "next lint",
-    "tailwind:watch": "npx tailwindcss -o styles/tailwind.css --watch",
-    "tailwind:build": "npx tailwindcss -o styles/tailwind.css"
+    "tailwind:watch": "npx tailwindcss -i styles/tailwind.config.css -o styles/tailwind.css --watch",
+    "tailwind:build": "npx tailwindcss -i styles/tailwind.config.css -o styles/tailwind.css",
+    "storybook": "yarn tailwind:watch& start-storybook -p 9000",
+    "build-storybook": "yarn tailwind:build && build-storybook"
   },
   "dependencies": {
     "@apollo/client": "^3.3.21",
@@ -17,12 +19,21 @@
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "graphql": "^15.5.1",
+    "@xstate/react": "^1.5.1",
     "next": "11.0.1",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "xstate": "^4.22.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@emotion/babel-preset-css-prop": "^11.2.0",
+    "@storybook/addon-actions": "^6.3.4",
+    "@storybook/addon-essentials": "^6.3.4",
+    "@storybook/addon-links": "^6.3.4",
+    "@storybook/react": "^6.3.4",
     "autoprefixer": "^10.3.1",
+    "babel-loader": "^8.2.2",
     "eslint": "7.30.0",
     "eslint-config-next": "11.0.1",
     "firebase": "^8.7.1",

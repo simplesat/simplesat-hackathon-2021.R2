@@ -5,7 +5,10 @@
     "target": "es2015",
     "strict": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "checkJs": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "preserve"
   },
   "exclude": ["node_modules"]
 }
