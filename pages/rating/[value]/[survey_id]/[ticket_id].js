@@ -1,4 +1,4 @@
-import { ApolloClient, gql, HttpLink, InMemoryCache, useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
@@ -17,18 +17,20 @@ export default function Rating() {
   }
 
   useEffect(() => {
-    const variables = {
-      customer_id: customer,
-      feedback_value: value,
-      owned_by: owned_by,
-      survey_id: survey_id,
-      ticket_id: ticket_id,
+    if (customer && ticket_id && value && survey_id && owned_by) {
+      const variables = {
+        customer_id: customer,
+        feedback_value: value,
+        owned_by: owned_by,
+        survey_id: survey_id,
+        ticket_id: ticket_id,
+      }
+      console.log('Rating -> variables', variables)
+      insertReceiveFeedbackEvent({
+        variables,
+      })
     }
-    console.log('Rating -> variables', variables)
-    insertReceiveFeedbackEvent({
-      variables,
-    })
-  }, [])
+  }, [customer, ticket_id, value, survey_id, owned_by])
 
   return (
     <>
