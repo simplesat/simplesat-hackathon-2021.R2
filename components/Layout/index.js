@@ -96,7 +96,7 @@ const navButtons = [
   },
   {
     label: 'Send email',
-    path: '/sendemail',
+    path: '/sendEmail',
     icon: <FontAwesomeIcon icon={faEnvelope} tw="w-4"></FontAwesomeIcon>,
   },
 ]
