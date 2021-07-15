@@ -3,7 +3,6 @@ import { Story } from '@storybook/react'
 
 import Input from '.'
 
-
 export default {
   title: 'Components/Input',
   component: Input,
@@ -31,4 +30,10 @@ Default.args = {}
 export const Disabled = Template.bind({})
 Disabled.args = {
   disabled: true,
+}
+
+export const Labeled = Template.bind({})
+Labeled.args = {
+  required: false,
+  label: 'Email',
 }

@@ -27,8 +27,8 @@ export default {
  */
 const Template = ({ onChangeInput, ...args }) => (
   <Form {...args}>
-    <Form.Input required onChange={onChangeInput} />
-    <Form.Input type="email" onChange={onChangeInput} />
+    <Form.Input placeholder="required" required onChange={onChangeInput} />
+    <Form.Input placeholder="email" type="email" onChange={onChangeInput} />
   </Form>
 )
 

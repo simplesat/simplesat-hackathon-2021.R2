@@ -1,16 +1,8 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { createMachine } from 'xstate'
+import { useMachine } from '@xstate/react'
 
 import Input from 'components/Input'
-import { useMachine } from '@xstate/react'
 
 /**
  * @typedef ContextValue
@@ -18,11 +10,7 @@ import { useMachine } from '@xstate/react'
  * @property {(callback: function) => function} registerOnSubmitCallback
  */
 
-/** @type {React.Context<ContextValue>} */
-// If I use Partial<ContextValue>, this error will go away, but it make typing down there
-// harder than it should be, because `registerOnSubmitCallback` will be nullable, and when
-// function is nullable, it will be really hard to write type for them.
-// @ts-ignore
+/** @type {React.Context<Partial<ContextValue>>} */
 const formContext = createContext({})
 
 /**
@@ -41,7 +29,7 @@ export default function Form({ children }) {
       return newOnSubmitCallbacks
     })
 
-    return () => {
+    const cleanUpOnSubmitCallbacks = () => {
       setOnSubmitCallback((onSubmitCallbacks) => {
         const newOnSubmitCallbacks = new Set(onSubmitCallbacks)
         newOnSubmitCallbacks.delete(onSubmitCallback)
@@ -49,7 +37,10 @@ export default function Form({ children }) {
         return newOnSubmitCallbacks
       })
     }
+
+    return cleanUpOnSubmitCallbacks
   }, [])
+
   return (
     <form
       onSubmit={(e) => {
@@ -76,13 +67,17 @@ Form.Input = function FormInput(props) {
   const { hiddenButtonRef, registerOnSubmitCallback } = useContext(formContext)
 
   useEffect(() => {
-    const unregisterOnSubmitCallback = registerOnSubmitCallback(() => {
-      sendFormInputEvent({
-        type: 'onSubmit',
+    // If this component isn't in the Form then `registerOnSubmitCallback` will be `undefined`
+    if (registerOnSubmitCallback) {
+      const unregisterOnSubmitCallback = registerOnSubmitCallback(() => {
+        sendFormInputEvent({
+          type: 'onSubmit',
+        })
       })
-    })
-    return () => {
-      unregisterOnSubmitCallback()
+
+      return () => {
+        unregisterOnSubmitCallback()
+      }
     }
   }, [registerOnSubmitCallback, sendFormInputEvent])
   function handleBlur() {
@@ -151,6 +146,7 @@ const formInputMachine = createMachine({
     VALID: {
       on: {
         onFocus: { target: 'TOUCHED' },
+        onChange: { target: 'TOUCHED' },
         onInvalid: { target: 'INVALID' },
       },
     },
