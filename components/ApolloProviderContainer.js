@@ -6,9 +6,7 @@ export default function ApolloProviderContainer({ children }) {
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken')
-    if (authToken) {
-      setApolloClient(createApolloClient(authToken))
-    }
+    setApolloClient(createApolloClient(authToken))
   }, [])
 
   if (apolloClient === null) {
@@ -19,13 +17,22 @@ export default function ApolloProviderContainer({ children }) {
 }
 
 const createApolloClient = (authToken) => {
-  return new ApolloClient({
-    link: new HttpLink({
-      uri: 'https://ss-hamburger-hack.hasura.app/v1/graphql',
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    }),
-    cache: new InMemoryCache(),
-  })
+  if (authToken) {
+    return new ApolloClient({
+      link: new HttpLink({
+        uri: 'https://ss-hamburger-hack.hasura.app/v1/graphql',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }),
+      cache: new InMemoryCache(),
+    })
+  } else {
+    return new ApolloClient({
+      link: new HttpLink({
+        uri: 'https://ss-hamburger-hack.hasura.app/v1/graphql',
+      }),
+      cache: new InMemoryCache(),
+    })
+  }
 }

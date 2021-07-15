@@ -57,10 +57,7 @@ export default function Login() {
       <div className="h-screen grid place-items-center">
         <div>
           <h1>Welcome usage report!!!</h1>
-          <ApolloProviderContainer>
-            <SendEmailContainer />
-          </ApolloProviderContainer>
-
+          <SendEmailContainer />
           <Button
             onClick={() => {
               firebase.auth().signOut()
