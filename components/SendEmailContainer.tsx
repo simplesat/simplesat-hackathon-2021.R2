@@ -48,7 +48,7 @@ export default function SendEmailContainer() {
 const INSERT_SEND_EMAIL_EVENT = gql`
   mutation CustomInsertSendEmailEvent($owned_by: String, $survey_id: String, $batch: jsonb) {
     custom_insert_send_email_event(
-      objects: { owned_by: $owned_by, survey_id: $survey_id, batch: $batch }
+      owned_by: $owned_by, survey_id: $survey_id, batch: $batch
     ) {
       id
       batch
