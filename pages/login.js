@@ -1,8 +1,6 @@
 import firebase from 'firebase'
 import { useEffect, useReducer } from 'react'
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
-import Button from 'components/Button'
-import SendEmailContainer from 'components/SendEmailContainer'
 import { useRouter } from 'next/router'
 
 export default function Login() {
@@ -14,12 +12,12 @@ export default function Login() {
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
         user.getIdToken().then(function (token) {
-          localStorage.setItem('authToken', token)
           const tokenPayload = extractTokenPayload(token)
           const hasHasuraClaim = Boolean(tokenPayload['https://hasura.io/jwt/claims'])
           if (hasHasuraClaim) {
             console.log('Has Hasura claim')
             console.log('Hasura claim', tokenPayload['https://hasura.io/jwt/claims'])
+            localStorage.setItem('authToken', token)
           } else {
             if (unregisterFirestoreObserver) {
               return
@@ -32,6 +30,7 @@ export default function Login() {
                     'Hasura claim',
                     extractTokenPayload(token)['https://hasura.io/jwt/claims']
                   )
+                  localStorage.setItem('authToken', token)
                 })
               }
             })
@@ -50,29 +49,11 @@ export default function Login() {
     }
   })
 
-  if (signinState == 'unknown') {
+  if (signinState === 'unknown' || signinState === 'signedIn') {
     return null
   }
 
-  if (signinState == 'signedIn') {
-    return (
-      <div className="h-screen grid place-items-center">
-        <div>
-          <h1>Welcome usage report!!!</h1>
-          <SendEmailContainer />
-          <Button
-            onClick={() => {
-              firebase.auth().signOut()
-            }}
-          >
-            Sign out
-          </Button>
-        </div>
-      </div>
-    )
-  }
-
-  if (signinState == 'signedOut') {
+  if (signinState === 'signedOut') {
     return (
       <div className="h-screen grid place-items-center">
         <div className="text-center text-xl">
@@ -85,6 +66,8 @@ export default function Login() {
     )
   }
 }
+
+Login.getLayout = (page) => page
 
 const uiConfig = {
   signInFlow: 'popup',
