@@ -3,10 +3,13 @@ import axios from 'axios'
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   if (!isRequestValid(req)) {
-    res.json({
+    return res.json({
       message: 'Request not from Hasura',
     })
   }
+
+  console.log('request body', req.body)
+  console.log('request headers', req.headers)
 
   const body = req.body
   if (body.action.name === 'custom_insert_send_email_event') {
@@ -43,11 +46,11 @@ export default async (req: VercelRequest, res: VercelResponse) => {
           }),
         },
       })
-    ).data.insert_send_email_event
+    ).data.insert_send_email_event_one
 
-    res.json(sendEmailEvent)
+    return res.json(sendEmailEvent)
   } else {
-    res.json({
+    return res.json({
       message: `Invalid action: ${body.action.name}`,
     })
   }
