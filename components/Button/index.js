@@ -18,11 +18,11 @@ export default function Button({ children, type = 'basic', className, onClick, d
 
   return (
     <button
+      className={className}
       css={[
-        tw`flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md cursor-pointer`,
+        tw`flex items-center justify-center px-6 py-2 border border-transparent text-base font-medium rounded-md cursor-pointer`,
         tw`disabled:cursor-default disabled:opacity-70`,
         typeStyles[type],
-        className,
       ]}
       disabled={disabled}
       onClick={onClick}

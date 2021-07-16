@@ -1,5 +1,6 @@
 import { useMutation, gql } from '@apollo/client'
 import { useState } from 'react'
+import 'twin.macro'
 
 import Button from './Button'
 
@@ -38,7 +39,7 @@ export default function SendEmailContainer() {
   return (
     <div>
       <SendEmailInput onChange={setBatch} />
-      <Button type="primary" onClick={sendEmail}>
+      <Button tw="mt-8" type="primary" onClick={sendEmail}>
         Send email
       </Button>
     </div>

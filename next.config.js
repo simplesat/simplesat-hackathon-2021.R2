@@ -6,4 +6,13 @@ module.exports = {
 
     return config
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/billing',
+        permanent: false,
+      },
+    ]
+  },
 }

@@ -8,18 +8,20 @@ import {
 import { withRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
+import { useAuthentication } from 'libs/authentication'
+
 export default withRouter(ApolloProviderContainer)
 function ApolloProviderContainer({ children, router }) {
   const [apolloClient, setApolloClient] = useState<ApolloClient<NormalizedCacheObject> | null>(null)
+  const { token } = useAuthentication()
 
   useEffect(() => {
     if (router.pathname.startsWith('/rating')) {
       setApolloClient(createApolloClient(null))
     } else {
-      const authToken = localStorage.getItem('authToken')
-      setApolloClient(createApolloClient(authToken))
+      setApolloClient(createApolloClient(token))
     }
-  }, [router.pathname])
+  }, [router.pathname, token])
 
   if (apolloClient === null) {
     return <>loading...</>

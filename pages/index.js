@@ -1,3 +1,10 @@
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+
 export default function Home() {
-  return <>Main woww</>
+  const router = useRouter()
+  useEffect(() => {
+    router.push('/billing')
+  }, [router])
+  return null
 }

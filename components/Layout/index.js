@@ -63,7 +63,7 @@ export default function Layout({ children }) {
                     firebase.auth().signOut()
                   }}
                 >
-                  <FontAwesomeIcon icon={faSignOut} tw="w-4 mr-2" />
+                  <FontAwesomeIcon icon={faSignOut} tw="mr-2" />
                   Sign out
                 </NavButton>
               </li>
@@ -86,7 +86,7 @@ const navButtons = [
   {
     label: (
       <>
-        <FontAwesomeIcon icon={faReceipt} tw="w-4 mr-2" />
+        <FontAwesomeIcon icon={faReceipt} tw="mr-2" />
         Billing page
       </>
     ),
@@ -95,7 +95,7 @@ const navButtons = [
   {
     label: (
       <>
-        <FontAwesomeIcon icon={faEnvelope} tw="w-4 mr-2" />
+        <FontAwesomeIcon icon={faEnvelope} tw="mr-2" />
         Send email
       </>
     ),

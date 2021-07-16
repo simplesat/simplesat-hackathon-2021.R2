@@ -3,51 +3,19 @@ import { useEffect, useReducer } from 'react'
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 import { useRouter } from 'next/router'
 
+import { useAuthentication } from 'libs/authentication'
+
 export default function Login() {
-  const [signinState, dispatch] = useReducer(signinReducer, defaultSigninState)
   const router = useRouter()
+  const [signinState, dispatch] = useReducer(signinReducer, defaultSigninState)
+  const { user } = useAuthentication()
 
   useEffect(() => {
-    let unregisterFirestoreObserver
-    const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async (user) => {
-      if (user) {
-        user.getIdToken().then(function (token) {
-          const tokenPayload = extractTokenPayload(token)
-          const hasHasuraClaim = Boolean(tokenPayload['https://hasura.io/jwt/claims'])
-          if (hasHasuraClaim) {
-            console.log('Has Hasura claim')
-            console.log('Hasura claim', tokenPayload['https://hasura.io/jwt/claims'])
-            localStorage.setItem('authToken', token)
-          } else {
-            if (unregisterFirestoreObserver) {
-              return
-            }
-            const db = firebase.firestore()
-            unregisterFirestoreObserver = db.doc(`metadata/${user.uid}`).onSnapshot((doc) => {
-              if (doc.data()) {
-                user.getIdToken(true).then((token) => {
-                  console.log(
-                    'Hasura claim',
-                    extractTokenPayload(token)['https://hasura.io/jwt/claims']
-                  )
-                  localStorage.setItem('authToken', token)
-                })
-              }
-            })
-          }
-          router.push('/billing')
-        })
-      }
-      dispatch(Boolean(user))
-    })
-
-    return () => {
-      unregisterAuthObserver()
-      if (unregisterFirestoreObserver) {
-        unregisterFirestoreObserver()
-      }
+    dispatch(user)
+    if (signinState === 'signedIn') {
+      router.push('/')
     }
-  })
+  }, [router, signinState, user])
 
   if (signinState === 'unknown' || signinState === 'signedIn') {
     return null
@@ -96,10 +64,3 @@ function signinReducer(_, isLoggedIn) {
 }
 
 const defaultSigninState = 'unknown'
-
-/**
- * @param {string} jwt
- */
-function extractTokenPayload(jwt) {
-  return JSON.parse(atob(jwt.split('.')[1]))
-}
