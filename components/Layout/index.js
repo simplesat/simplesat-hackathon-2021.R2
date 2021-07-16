@@ -70,7 +70,7 @@ export default function Layout({ children }) {
               </li>
             </ul>
           </div>
-          <div className="flex-1 p-5">{children}</div>
+          <div className="flex-1 p-10">{children}</div>
         </div>
       </main>
 
