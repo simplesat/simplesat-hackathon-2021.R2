@@ -12,28 +12,8 @@ from gql.transport.aiohttp import AIOHTTPTransport
 app = FastAPI()
 
 
-hasura_admin_secret = os.getenv("HASURA_ADMIN_SECRET", "")
 simplesat_secret_token = os.getenv("SIMPLESAT_SECRET_TOKEN", "")
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
-
-headers = {
-    'content-type': 'application/json',
-    'x-hasura-admin-secret': hasura_admin_secret
-}
-transport = AIOHTTPTransport(url=hasura_graphql_server, headers=headers)
-client = Client(transport=transport, fetch_schema_from_transport=True)
-
-get_customer_query = gql(
-    """
-    query getCustomer($email: String) {
-        customer(where: {email: {_eq: $email}})  {
-            email
-            id
-            owned_by
-        }
-    }
-    """
-)
 
 class EventTriggerPayload(BaseModel):
     id: str
@@ -58,13 +38,6 @@ def send_email(event_trigger_payload: EventTriggerPayload):
 
     personalizations = []
     for receiver in event_trigger_payload.event['data']['new']['batch']:
-        customer = client.execute(
-            get_customer_query, variable_values={
-                "email": receiver['email']
-            }
-        )
-        customer = customer['customer'] 
-
         file_loader = FileSystemLoader('api/send-email/templates')
         env = Environment(loader=file_loader)
         template = env.get_template('email_template.html')
@@ -72,8 +45,8 @@ def send_email(event_trigger_payload: EventTriggerPayload):
             question=question,
             survey_id=event_trigger_payload.event['data']['new']['survey_id'],
             ticket_id=receiver['ticket_id'],
-            customer_id=customer[0]['email'] if len(customer) > 0 else ''
-            owned_by=customer[0]['owned_by'] if len(customer) > 0 else 'com_1000'
+            customer_id=receiver['customer_id'],
+            owned_by=receiver['owned_by']
         )
 
         sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
