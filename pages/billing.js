@@ -1,4 +1,3 @@
-import Layout from 'components/Layout'
 import { useQuery, gql } from '@apollo/client'
 
 export default function Billing() {
@@ -9,25 +8,25 @@ export default function Billing() {
   })
   if (loading) {
     return (
-      <Layout>
+      <>
         <h2 className="font-bold mb-5">Usage overview this month</h2>
         <Loader />
         <hr className="my-8" />
         <h2 className="font-bold mb-5">Usage detail</h2>
         <Loader />
-      </Layout>
+      </>
     )
   }
 
   if (error) {
     return (
-      <Layout>
+      <>
         <h2 className="font-bold mb-5">Usage overview this month</h2>
         <ErrorMessage />
         <hr className="my-8" />
         <h2 className="font-bold mb-5">Usage detail</h2>
         <ErrorMessage />
-      </Layout>
+      </>
     )
   }
 
@@ -38,7 +37,7 @@ export default function Billing() {
   const emailSentUsedPercent = (emailSent / 1000) * 100
 
   return (
-    <Layout>
+    <>
       <h2 className="font-bold mb-5">Usage overview this month</h2>
       <div className="px-5 py-8 border border-gray-100 shadow-md flex flex-col w-1/2">
         <div className="flex">
@@ -78,7 +77,7 @@ export default function Billing() {
       <hr className="my-8" />
       <h2 className="font-bold mb-5">Usage detail</h2>
       <UsageTable usages={usages} />
-    </Layout>
+    </>
   )
 }
 
