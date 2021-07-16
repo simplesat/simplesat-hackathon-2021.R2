@@ -1,4 +1,5 @@
 import { useQuery, gql } from '@apollo/client'
+import Head from 'next/head'
 
 export default function Billing() {
   const { loading, error, data } = useQuery(GET_USAGES, {
@@ -9,6 +10,11 @@ export default function Billing() {
   if (loading) {
     return (
       <>
+        <Head>
+          <title>Billing page</title>
+          <meta property="og:title" content="Billing page" key="title" />
+        </Head>
+        <h1>Billing page</h1>
         <h2 className="font-bold mb-5">Usage overview this month</h2>
         <Loader />
         <hr className="my-8" />
@@ -21,6 +27,11 @@ export default function Billing() {
   if (error) {
     return (
       <>
+        <Head>
+          <title>Billing page</title>
+          <meta property="og:title" content="Billing page" key="title" />
+        </Head>
+        <h1>Billing page</h1>
         <h2 className="font-bold mb-5">Usage overview this month</h2>
         <ErrorMessage />
         <hr className="my-8" />
@@ -38,6 +49,11 @@ export default function Billing() {
 
   return (
     <>
+      <Head>
+        <title>Billing page</title>
+        <meta property="og:title" content="Billing page" key="title" />
+      </Head>
+      <h1>Billing page</h1>
       <h2 className="font-bold mb-5">Usage overview this month</h2>
       <div className="px-5 py-8 border border-gray-100 shadow-md flex flex-col w-1/2">
         <div className="flex">

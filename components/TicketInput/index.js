@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import tw, { css } from 'twin.macro'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -31,19 +31,15 @@ export default function TicketInput({
   disabled,
   required,
 }) {
-  const [randomizedTicketId, setRandomizedTicketId] = useState(() => {
-    const randomizedTicketId = randomBase62TicketId()
-    onChange(randomizedTicketId)
-
-    return randomizedTicketId
-  })
+  const [randomizedTicketId, setRandomizedTicketId] = useState(randomBase62TicketId())
 
   function randomTicketId() {
-    const randomizedTicketId = randomBase62TicketId()
-    onChange(randomizedTicketId)
-
-    setRandomizedTicketId(randomizedTicketId)
+    setRandomizedTicketId(randomBase62TicketId())
   }
+
+  useEffect(() => {
+    onChange(randomizedTicketId)
+  }, [onChange, randomizedTicketId])
 
   return (
     <span tw="relative inline-block mr-4 last-of-type:mr-0" className={className}>
@@ -56,6 +52,7 @@ export default function TicketInput({
         )}
         <input
           value={randomizedTicketId}
+          readOnly
           onSelect={(e) => {
             e.preventDefault()
           }}

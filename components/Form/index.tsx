@@ -64,8 +64,7 @@ Form.Input = function FormInput({
   as,
   ...props
 }: React.ComponentPropsWithoutRef<typeof Input> & FormInputProps) {
-  const [formInputMachineState, sendFormInputEvent] = useMachine(formInputMachine)
-  console.log('inputStatus', formInputMachineState.value)
+  const [_, sendFormInputEvent] = useMachine(formInputMachine)
   const { hiddenButtonRef, registerOnSubmitCallback } = useContext(formContext)
 
   useEffect(() => {
