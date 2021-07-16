@@ -1,35 +1,26 @@
-import Link from 'next/link'
-import { withRouter } from 'next/router'
 import tw, { css } from 'twin.macro'
 
 /**
  * @param {object} props
- * @param {string} props.label
- * @param {string} props.path
- * @param {object} props.icon
+ * @param {import('react').ReactNode} props.children
+ * @param {boolean} [props.isActive]
+ * @param {() => void} [props.onClick]
  */
-export default withRouter(NavButton)
-function NavButton({ label, path, icon, router }) {
-  const menuItemStyles = css`
-    ${tw`flex items-center  py-1 md:py-3 pl-4 align-middle no-underline`}
-    &:hover {
-      ${tw`bg-green-50 border-r-4 border-green-400`}
-    }
-  `
-
-  const menuItemTextStyles = css`
-    ${tw`!ml-2 pb-1 md:pb-0 text-xs md:text-base block md:inline-block`}
-  `
-  const activeMenuStyles = css`
-    ${tw`bg-green-50 border-r-4 border-green-400`}
-  `
-
+export default function NavButton({ isActive, children, onClick }) {
   return (
-    <Link href={path}>
-      <a css={[menuItemStyles, router.pathname === path && activeMenuStyles]}>
-        {icon}
-        <span css={menuItemTextStyles}>{label}</span>
-      </a>
-    </Link>
+    <a onClick={onClick} css={[menuItemStyles, isActive && activeMenuStyles]}>
+      {children}
+    </a>
   )
 }
+
+const menuItemStyles = css`
+  ${tw`cursor-pointer flex items-center py-1 md:py-3 pl-4 align-middle no-underline`}
+  &:hover {
+    ${tw`bg-green-50 border-r-4 border-green-400`}
+  }
+`
+
+const activeMenuStyles = css`
+  ${tw`bg-green-50 border-r-4 border-green-400`}
+`

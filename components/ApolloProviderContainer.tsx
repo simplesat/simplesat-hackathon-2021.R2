@@ -10,12 +10,12 @@ import { useEffect, useState } from 'react'
 
 export default withRouter(ApolloProviderContainer)
 function ApolloProviderContainer({ children, router }) {
-  const [apolloClient, setApolloClient] = useState<ApolloClient<NormalizedCacheObject>|null>(null)
+  const [apolloClient, setApolloClient] = useState<ApolloClient<NormalizedCacheObject> | null>(null)
 
   useEffect(() => {
-    if(router.pathname.startsWith('/rating')){
+    if (router.pathname.startsWith('/rating')) {
       setApolloClient(createApolloClient(null))
-    }else{
+    } else {
       const authToken = localStorage.getItem('authToken')
       setApolloClient(createApolloClient(authToken))
     }

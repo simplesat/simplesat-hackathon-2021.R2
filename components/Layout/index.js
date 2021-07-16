@@ -1,26 +1,16 @@
 import firebase from 'firebase'
 import Head from 'next/head'
 import Image from 'next/image'
-import { withRouter } from 'next/router'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
 import tw, { css } from 'twin.macro'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faReceipt, faSignOut } from '@fortawesome/pro-solid-svg-icons'
 
 import NavButton from 'components/NavButton'
 
-export default withRouter(Layout)
-function Layout({ children, router }) {
-  const menuItemStyles = css`
-    ${tw`flex items-center  py-1 md:py-3 pl-4 align-middle no-underline !cursor-pointer`}
-    &:hover {
-      ${tw`bg-green-50 border-r-4 border-green-400`}
-    }
-  `
-
-  const menuItemTextStyles = css`
-    ${tw`!ml-2 pb-1 md:pb-0 text-xs md:text-base block md:inline-block`}
-  `
-
+export default function Layout({ children }) {
+  const router = useRouter()
   return (
     <div>
       <Head>
@@ -59,23 +49,24 @@ function Layout({ children, router }) {
               ]}
             >
               {navButtons.map((nav) => (
-                <li className="mr-3 flex-1" key={nav.label}>
-                  <NavButton label={nav.label} path={nav.path} icon={nav.icon} />
+                <li className="mr-3 flex-1" key={nav.path}>
+                  <Link href={nav.path} passHref>
+                    <NavButton isActive={nav.path === router.pathname}>{nav.label}</NavButton>
+                  </Link>
                 </li>
               ))}
 
               <li className="mr-3 flex-1">
-                <a
+                <NavButton
                   onClick={(e) => {
                     e.preventDefault()
                     router.push('/login')
                     firebase.auth().signOut()
                   }}
-                  css={[menuItemStyles]}
                 >
-                  <FontAwesomeIcon icon={faSignOut} tw="w-4" />
-                  <span css={menuItemTextStyles}>Sign out</span>
-                </a>
+                  <FontAwesomeIcon icon={faSignOut} tw="w-4 mr-2" />
+                  Sign out
+                </NavButton>
               </li>
             </ul>
           </div>
@@ -88,15 +79,27 @@ function Layout({ children, router }) {
   )
 }
 
+const menuItemTextStyles = css`
+  ${tw`!ml-2 pb-1 md:pb-0 text-xs md:text-base block md:inline-block`}
+`
+
 const navButtons = [
   {
-    label: 'Billing page',
+    label: (
+      <>
+        <FontAwesomeIcon icon={faReceipt} tw="w-4 mr-2" />
+        Billing page
+      </>
+    ),
     path: '/billing',
-    icon: <FontAwesomeIcon icon={faReceipt} tw="w-4"></FontAwesomeIcon>,
   },
   {
-    label: 'Send email',
+    label: (
+      <>
+        <FontAwesomeIcon icon={faEnvelope} tw="w-4 mr-2" />
+        Send email
+      </>
+    ),
     path: '/sendEmail',
-    icon: <FontAwesomeIcon icon={faEnvelope} tw="w-4"></FontAwesomeIcon>,
   },
 ]
