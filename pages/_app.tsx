@@ -12,16 +12,27 @@ import React from 'react'
 
 export default function MyApp({ Component, pageProps }) {
   const getLayout = Component.getLayout || defaultGetLayout
+  const withAuthentication = Component.withAuthentication || defaultWithAuthentication
+  const enhance = compose(getLayout, withAuthentication)
 
-  return getLayout(
-    <WithAuthentication>
-      <ApolloProviderContainer>
-        <Component {...pageProps} />
-      </ApolloProviderContainer>
-    </WithAuthentication>
+  return enhance(
+    <ApolloProviderContainer>
+      <Component {...pageProps} />
+    </ApolloProviderContainer>
   )
 }
 
 function defaultGetLayout(page) {
   return <Layout>{page}</Layout>
+}
+
+function defaultWithAuthentication(page) {
+  return <WithAuthentication>{page}</WithAuthentication>
+}
+
+function compose(...functions: ((value: any) => any)[]) {
+  return (value) =>
+    functions.reduceRight((previousFunctionOutput, currentFunction) => {
+      return currentFunction(previousFunctionOutput)
+    }, value)
 }

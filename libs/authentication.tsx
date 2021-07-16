@@ -1,4 +1,4 @@
-import { useRouter } from 'next/dist/client/router'
+import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 import firebase from 'firebase'
 import React from 'react'
@@ -13,12 +13,11 @@ type AuthenticationState = {
 export default function WithAuthentication({ children }) {
   const router = useRouter()
   const [authenticationState, setAuthenticationState] = useState<AuthenticationState>({
-    user: null,
+    user: undefined,
     token: null,
   })
 
   useEffect(() => {
-    console.log('use effect')
     let unregisterFirestoreObserver
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
@@ -49,7 +48,10 @@ export default function WithAuthentication({ children }) {
           }
         })
       } else {
-        router.push('/login')
+        setAuthenticationState({
+          user: null,
+          token: null,
+        })
       }
     })
 
@@ -59,7 +61,14 @@ export default function WithAuthentication({ children }) {
         unregisterFirestoreObserver()
       }
     }
-  }, [router])
+  }, [])
+
+  useEffect(() => {
+    const isUserSignedOut = authenticationState.user === null
+    if (isUserSignedOut) {
+      router.push('/login')
+    }
+  }, [authenticationState.user, router])
 
   return (
     <authenticationContext.Provider value={authenticationState}>

@@ -56,6 +56,9 @@ export default function Rating() {
   )
 }
 
+Rating.getLayout = page => page
+Rating.withAuthentication = (page) => page
+
 function StarRating({ rating }) {
   if (rating > 0) {
     return (
